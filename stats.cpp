@@ -1,47 +1,81 @@
+#include<iostream>
 #include "stats.h"
-#include "gtest/gtest.h"
-#include <cmath>
+#include<cfloat>
 
+using namespace std;
 using namespace Statistics;
 
-TEST(Statistics, ReportsAverageMinMax) {
-    auto computedStats = Statistics::ComputeStatistics({1.5, 8.9, 3.2, 4.5});
-    float epsilon = 0.001f;
-    EXPECT_LT(std::abs(computedStats.average - 4.525), epsilon);
-    EXPECT_LT(std::abs(computedStats.max - 8.9), epsilon);
-    EXPECT_LT(std::abs(computedStats.min - 1.5), epsilon);
-}
-
-TEST(Statistics, AverageNaNForEmpty) {
-    auto computedStats = Statistics::ComputeStatistics({});
-    //All fields of computedStats (average, max, min) must be
-    //NAN (not-a-number), as defined in math.h
-
-    //Design the REQUIRE statement here.
-    //Use http://www.cplusplus.com/reference/cmath/isnan/
-    EXPECT_EQ(TRUE, isnan(computedStats.average));
-    EXPECT_EQ(TRUE, isnan(computedStats.max));
-    EXPECT_EQ(TRUE, isnan(computedStats.min));
-}
-
-TEST(Alert, AlertsWhenMaxExceeds) {
-    EmailAlert emailAlert;
-    LEDAlert ledAlert;
-    std::vector<IAlerter*> alerters = {&emailAlert, &ledAlert};
-    
-    const float maxThreshold = 10.2f;
-    
-    StatsAlerter statsAlerter(maxThreshold, alerters);
-    statsAlerter.checkAndAlert({99.8, 34.2, 4.5, 6.7});
-
-    EXPECT_TRUE(emailAlert.emailSent);
-    EXPECT_TRUE(ledAlert.ledGlows);
-}
-
-//Google test main entry point
-int main(int argc, char* argv[])
+Stats Statistics::ComputeStatistics(const std::vector<double>& computedStats)
 {
-    ::testing::InitGoogleTest(&argc, argv);
-    int result = RUN_ALL_TESTS();
-    return result;
+    static Stats stData = {0};
+
+    if (computedStats.size() > 0)
+    {
+        /* Average calcuation */
+        for (auto Value : computedStats)
+        {
+            stData.average = stData.average + Value;
+        }
+        stData.average = stData.average / computedStats.size();
+
+        /* Max caluclation */
+        double max = 0.0;
+        for (auto value : computedStats)
+        {
+            if (value > max)
+            {
+                max = value;
+            }
+        }
+        stData.max = max;
+
+        /* Min caluclation */
+        double min = DBL_MAX;
+        for (auto value : computedStats)
+        {
+            if (value < min)
+            {
+                min = value;
+            }
+        }
+        stData.min = min;
+    }
+    else
+    {
+        stData.average = NAN;
+        stData.min = NAN;
+        stData.max = NAN;
+    }
+
+    return stData;
+}
+
+void EmailAlert::SetAlert(void)
+{
+    emailSent = TRUE;
+}
+
+void LEDAlert::SetAlert(void)
+{
+    ledGlows = TRUE;
+}
+
+void StatsAlerter::checkAndAlert(const std::vector<double>& computedStats)
+{
+    double max = 0.0;
+    for (auto value : computedStats)
+    {
+        if (value > max)
+        {
+            max = value;
+        }
+    }
+    /* Check for threashold */
+    if (max > m_maxThreshold)
+    {
+        for (auto value : m_vIAlerter)
+        {
+            value->SetAlert();
+        }
+    }
 }
