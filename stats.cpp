@@ -42,9 +42,9 @@ Stats Statistics::ComputeStatistics(const std::vector<double>& computedStats)
     }
     else
     {
-        stData.average = NAN;
-        stData.min = NAN;
-        stData.max = NAN;
+        stData.average = std::nan("NaN");
+        stData.min = std::nan("NaN");
+        stData.max = std::nan("NaN");
     }
 
     return stData;
