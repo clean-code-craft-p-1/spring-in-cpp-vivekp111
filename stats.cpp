@@ -1,7 +1,7 @@
 #include<iostream>
 #include "stats.h"
 #include<cfloat>
-
+#include <cmath>
 using namespace std;
 using namespace Statistics;
 
