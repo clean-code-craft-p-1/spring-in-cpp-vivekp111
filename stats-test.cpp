@@ -25,13 +25,13 @@ TEST(Statistics, AverageNaNForEmpty) {
 }
 
 TEST(Alert, AlertsWhenMaxExceeds) {
-    EmailAlert emailAlert;
-    LEDAlert ledAlert;
+    Statistics::EmailAlert emailAlert;
+    Statistics::LEDAlert ledAlert;
     std::vector<IAlerter*> alerters = {&emailAlert, &ledAlert};
     
     const float maxThreshold = 10.2f;
     
-    StatsAlerter statsAlerter(maxThreshold, alerters);
+    Statistics::StatsAlerter statsAlerter(maxThreshold, alerters);
     statsAlerter.checkAndAlert({99.8, 34.2, 4.5, 6.7});
 
     EXPECT_TRUE(emailAlert.emailSent);
