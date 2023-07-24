@@ -1,6 +1,7 @@
 #include "stats.h"
 #include "gtest/gtest.h"
 #include <cmath>
+#include <cfloat>
 
 using namespace Statistics;
 
