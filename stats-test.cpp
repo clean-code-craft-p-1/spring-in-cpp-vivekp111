@@ -1,5 +1,6 @@
 #include "stats.h"
 #include "gtest/gtest.h"
+#include<iostream>
 #include <cmath>
 #include <cfloat>
 
